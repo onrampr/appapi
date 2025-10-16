@@ -41,6 +41,19 @@ export const testConnection = async () => {
   }
 };
 
+// Connect to database (alias for testConnection)
+export const connectDB = async () => {
+  try {
+    const connectionPool = createPool();
+    const connection = await connectionPool.getConnection();
+    console.log('✅ MySQL Database connected successfully');
+    connection.release();
+  } catch (error) {
+    console.error('❌ MySQL Database connection failed:', error);
+    process.exit(1);
+  }
+};
+
 // Database query helper
 export const query = async (text, params = []) => {
   const start = Date.now();
