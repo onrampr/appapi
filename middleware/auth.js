@@ -19,7 +19,7 @@ export const authenticateToken = async (req, res, next) => {
     // Verify user still exists and is active (using existing users table)
     const result = await query(
       'SELECT id, email, first_name, last_name, is_verified, kyc_status, tos_status, bridge_customer_id FROM users WHERE id = ?',
-      [decoded.id]
+      [decoded.userId]
     );
 
     if (result.rows.length === 0) {
@@ -84,7 +84,7 @@ export const authenticateMobileSession = async (req, res, next) => {
     if (deviceId) {
       const sessionResult = await query(
         'SELECT id FROM mobile_sessions WHERE user_id = ? AND device_id = ? AND expires_at > NOW()',
-        [decoded.id, deviceId]
+        [decoded.userId, deviceId]
       );
 
       if (sessionResult.rows.length === 0) {
@@ -98,7 +98,7 @@ export const authenticateMobileSession = async (req, res, next) => {
     // Verify user still exists and is active
     const result = await query(
       'SELECT id, email, first_name, last_name, is_verified, kyc_status, tos_status, bridge_customer_id FROM users WHERE id = ?',
-      [decoded.id]
+      [decoded.userId]
     );
 
     if (result.rows.length === 0) {
@@ -209,7 +209,7 @@ export const optionalAuth = async (req, res, next) => {
     const decoded = jwt.verify(token, process.env.JWT_SECRET);
     const result = await query(
       'SELECT id, email, first_name, last_name, is_verified, kyc_status, tos_status, bridge_customer_id FROM users WHERE id = ?',
-      [decoded.id]
+      [decoded.userId]
     );
 
     req.user = result.rows.length > 0 ? result.rows[0] : null;
